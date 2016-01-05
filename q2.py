@@ -1,6 +1,5 @@
 # facebook hackers cup 2015
-# qualification round problem 1
-# Cooking the Books
+# qualification round problem 2
 
 import sys
 from itertools import combinations
