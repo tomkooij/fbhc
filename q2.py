@@ -5,7 +5,7 @@
 import sys
 from itertools import combinations
 
-DEBUG = 1
+DEBUG = 0
 TESTCASE = 'input/new_years_resolution_example_input.txt'
 
 
@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     cases = parse(f)
 
-    for casenr, case in enumerate(cases):
+    for casenr, case in enumerate(cases, start=1):
         gp, gc, gf, N, foods = case
 
         # stupid hack to allow "single item" testcase to pass
