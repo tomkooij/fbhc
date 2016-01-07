@@ -1,58 +1,58 @@
 # fbhc 2014
 # square detector
 
+from collections import defaultdict
 
 TESTCASE = 'input/basketball_game_example_input.txt'
 INPUT = 'input/basketball_game.txt'
 
-playerconv = lambda x : (x[0], int(x[1]), int(x[2]))
-addtime = lambda x : (x[0], x[1]+1, x[2])
+
+def playing(team):
+    return filter(lambda x: x['playing'], team)
+def bench(team):
+    return filter(lambda x: not x['playing'], team)
+def teamA(team):
+    return filter(lambda x: x['number'] % 2, team)
+def teamB(team):
+    return filter(lambda x: not (x['number'] % 2), team)
+
 
 if __name__ == '__main__':
     with open(TESTCASE) as f:
         T = int(f.readline())
 
-
         for case in range(1,T+1):
             N, M, P =  map(int,f.readline().split())
             #print "DBG, case",(case,N,M,P)
 
-            players = [playerconv(f.readline().split()) for _ in range(0,N)]
-
-            players = sorted(players, key = lambda x: (x[1], x[2]), reverse=True)
+            # read players from input
+            players = []
+            for _ in range(0, N):
+                player = defaultdict()
+                name, shot, height= f.readline().split()
+                player['name'] = name
+                player['shot'] = int(shot)
+                player['height'] = int(height)
+                players.append(player)
 
             assert len(players) == N, 'read wrong number of players!'
 
-            team1, team2 = [], []
+            # assign draft number
+            players = sorted(players, key = lambda x: (x['shot'], x['height']), reverse=True)
             for number, player in enumerate(players, start=1):
-                if number % 2:
-                    # odd
-                    team1.append((number, 0, player[0]))
-                else:
-                    team2.append((number, 0, player[0]))
-
-            playing = [team1[:P], team2[:P]]
-            bench = [team1[P:], team2[P:]]
+                player['number'] = number
+                player['playing'] = number < 2*P+1  # True if playing
+                player['time'] = 0
 
             for minute in range(M):
-                for team in range(2):
-                    #print "M, team", M, team
-                    #print playing[team]
-                    #print bench[team]
-                    # add minute for everyone on the field
-                    playing[team] = [addtime(player) for player in playing[team]]
-                    # subs
-                    if bench[team]:
-                        subout = sorted(playing[team], key=lambda x: (x[1], x[0]), reverse=True)[0]
-                        playing[team].remove(subout)
-                        subin = sorted(bench[team], key=lambda x: (x[1], x[0]))[0]
-                        #print "DBG: in, out: ", subin, subout
-                        bench[team].remove(subin)
-                        playing[team].append(subin)
-                        bench[team].append(subout)
+                # add minute for everyone on the field
+                for player in playing(players):
+                    player['time'] += 1
 
-            result = []
-            for team in range(2):
-                for player in playing[team]:
-                    result.append(player[2])
+                # subs for each team
+                for team in [teamA, teamB]:
+                    max(team(playing(players)), key=lambda x: (x['time'], x['number']))['playing'] = False
+                    min(team(bench(players)), key=lambda x: (x['time'], x['number']))['playing'] = True
+
+            result = map(lambda x: x['name'], playing(players))
             print "Case #%d: %s" % (case, ' '.join(sorted(result)))
