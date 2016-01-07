@@ -9,7 +9,7 @@ playerconv = lambda x : (x[0], int(x[1]), int(x[2]))
 addtime = lambda x : (x[0], x[1]+1, x[2])
 
 if __name__ == '__main__':
-    with open(INPUT) as f:
+    with open(TESTCASE) as f:
         T = int(f.readline())
 
 
@@ -17,9 +17,7 @@ if __name__ == '__main__':
             N, M, P =  map(int,f.readline().split())
             #print "DBG, case",(case,N,M,P)
 
-            players = []
-            for _ in range(0,N):
-                players.append(playerconv(f.readline().split()))
+            players = [playerconv(f.readline().split()) for _ in range(0,N)]
 
             players = sorted(players, key = lambda x: (x[1], x[2]), reverse=True)
 
@@ -56,5 +54,5 @@ if __name__ == '__main__':
             result = []
             for team in range(2):
                 for player in playing[team]:
-                    result.append(player[2]+' ')
-            print "Case #%d: %s" % (case, ''.join(sorted(result)))
+                    result.append(player[2])
+            print "Case #%d: %s" % (case, ' '.join(sorted(result)))
