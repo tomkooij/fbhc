@@ -18,7 +18,7 @@ def distance(star1, star2):
 
 
 if __name__ == '__main__':
-    with open(TESTCASE) as f:
+    with open(TESTTOM) as f:
         T = int(f.readline())
 
         for case in range(1,T+1):
@@ -31,9 +31,8 @@ if __name__ == '__main__':
             # get all distances
             d = {}
             for i in range(len(stars)):
-                for j in range(len(stars)):
+                for j in range(i, len(stars)):
                     if i==j: continue
-                    if (j,i) in d: continue
                     d[(i,j)] = distance(stars[i], stars[j])
 
             # get all unique distances
@@ -51,7 +50,7 @@ if __name__ == '__main__':
                 l = sorted(l)
                 # count frequencies of star indexes
                 frequencies = [len(list(group)) for key, group in groupby(l)]
-                print frequencies
+                #print frequencies
 
                 # count the number of boomerang constellations:
                 #  number = number of edges in graph with n nodes => n*(n+1)/2
