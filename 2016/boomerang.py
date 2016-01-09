@@ -8,6 +8,7 @@ from math import sqrt
 from random import randint
 
 TESTCASE = 'input/boomerang_constellations_example_input.txt'
+TESTTOM = 'input/tom_boomerang.txt'
 INPUT = 'input/boomerang_constellations.txt'
 CHECKNAIVE = 1      # compare solution against SLOW naive solution
 
@@ -17,7 +18,7 @@ def distance(star1, star2):
 
 
 if __name__ == '__main__':
-    with open(TESTCASE) as f:
+    with open(TESTTOM) as f:
         T = int(f.readline())
 
         for case in range(1,T+1):
@@ -40,7 +41,7 @@ if __name__ == '__main__':
 
             result = 0
             for dist in unique_d:
-                #print "search: ", dist
+                print "search d =", dist
                 l = []   # list of star indexes
                 for (x,y), d1 in d.iteritems():
                     if d1 == dist:
@@ -50,32 +51,31 @@ if __name__ == '__main__':
                 l = sorted(l)
                 # count frequencies of star indexes
                 frequencies = [len(list(group)) for key, group in groupby(l)]
-                #print frequencies
+                print frequencies
 
                 # count the number of boomerang constellations:
-                # f == 1 : 0
-                # f == 2 : 1
-                # f == 3 : 3
-                # f == 4 : 4
-                # etc
+                #  number = number of edges in graph with n nodes => n*(n+1)/2
                 for freq in frequencies:
-                    if freq == 2:
-                        result += freq - 1
-                    elif freq > 1:
-                        result +=freq
+                    result += freq*(freq-1)/2
+                #print "intermediate result = ", result
             #
             # extremely slow (complex) naive solution
             #
             if CHECKNAIVE:
                 result_naive = 0
                 for star in stars:
+                    seen = []
                     for i in range(len(stars)):
                         if stars[i] == star: continue
                         for j in range(len(stars)):
                             if i==j: continue
-                            if stars[j] == star: continue
-                            if distance(star, stars[i]) == distance(star, stars[j]):
-                                result_naive += 1
-                assert result_naive/2 == result, 'solution != naive solution'
+                            if (j,i) not in seen:
+                                seen.append((i,j))
+                                if stars[j] == star: continue
+                                if distance(star, stars[i]) == distance(star, stars[j]):
+                                    result_naive += 1
+                if result != result_naive:
+                    print result_naive, result
+                assert result_naive == result, 'solution != naive solution'
 
             print "Case #%d: %d" % (case, result)
