@@ -11,15 +11,15 @@ from random import randint
 TESTCASE = 'input/boomerang_constellations_example_input.txt'
 TESTTOM = 'input/tom_boomerang.txt'
 INPUT = 'input/boomerang_constellations.txt'
-CHECKNAIVE = 1        # compare solution against SLOW naive solution
-RANDOM_STARFIELD = 1  # generate a random starfield
+CHECKNAIVE = 0        # compare solution against SLOW naive solution
+RANDOM_STARFIELD = 0  # generate a random starfield
 
 def distance(star1, star2):
     return sqrt((star2[0]-star1[0])**2 + (star2[1]-star1[1])**2)
 
 
 if __name__ == '__main__':
-    with open(TESTCASE) as f:
+    with open(INPUT) as f:
         T = int(f.readline())
 
         for case in range(1,T+1):
@@ -27,7 +27,7 @@ if __name__ == '__main__':
             stars = [tuple(map(int,f.readline().rstrip('\n').split())) for line in range(N)]
 
             if RANDOM_STARFIELD:
-                N = 15
+                N = 30
                 stars = [(i,j) for i in range(N) for j in range(N)]
                 for _ in range(randint(0,(N-1)*(N-1))):
                     stars.pop(randint(0,len(stars)-1))
