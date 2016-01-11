@@ -3,6 +3,7 @@
 # 50 testcases (-> 1 sec testcase)
 #  1000 stars per testcase... Naive permutation solution >> 1 min/testcase
 
+
 from collections import defaultdict, Counter
 from math import sqrt
 from random import randint
@@ -12,6 +13,28 @@ TESTTOM = 'input/boomerang_constellations_BIG_INPUT.txt'
 INPUT = 'input/boomerang_constellations.txt'
 CHECKNAIVE = 0        # compare solution against SLOW naive solution
 
+def get_distances(stars):
+    length = len(stars)
+    d = defaultdict(lambda : defaultdict(int))
+    for i in xrange(length):
+        for j in xrange(i, length):
+            if i==j: continue
+            x = (stars[j][0]-stars[i][0])
+            y = (stars[j][1]-stars[i][1])
+            dd = x**2 + y**2
+            d[dd][i] += 1
+            d[dd][j] += 1
+    return d
+
+
+def count_frequencies(d):
+    result = 0
+    for frequencies in d.values():
+        # number of boomerang constellations:
+        #  = number of edges in graph with n nodes => n*(n+1)/2
+        for freq in frequencies.values():
+            result += freq*(freq-1)/2
+    return result
 
 if __name__ == '__main__':
     with open(INPUT) as f:
@@ -21,40 +44,9 @@ if __name__ == '__main__':
             N = int(f.readline())
             stars = [tuple(map(int,f.readline().rstrip('\n').split())) for line in range(N)]
 
-            print "pim"
             # create a dict with key = distances. Values = dict with list of index frequencies
-            d = defaultdict(lambda : defaultdict(int))
-            for i in range(len(stars)):
-                for j in range(i, len(stars)):
-                    if i==j: continue
-                    dd = (stars[j][0]-stars[i][0])**2 + (stars[j][1]-stars[i][1])**2
-                    d[dd][i] += 1
-                    d[dd][j] += 1
-            print "pam"
+            distances = get_distances(stars)
             # for each distance count the number of boomerang constellations
-            result = 0
-            for frequencies in d.values():
-                # number of boomerang constellations:
-                #  = number of edges in graph with n nodes => n*(n+1)/2
-                for freq in frequencies.values():
-                    result += freq*(freq-1)/2
-            print "pet"
-            #
-            # extremely slow (complex) naive solution
-            #
-            if CHECKNAIVE:
-                print "computing naive solution (SLOW!)"
-                result_naive = 0
-                for star in stars:
-                    for i in range(len(stars)):
-                        if stars[i] == star: continue
-                        for j in range(i, len(stars)):
-                            if i==j: continue
-                            if stars[j] == star: continue
-                            if distance(star, stars[i]) == distance(star, stars[j]):
-                                result_naive += 1
-                if result != result_naive:
-                    print result_naive, result
-                assert result_naive == result, 'solution != naive solution'
+            result = count_frequencies(distances)
 
             print "Case #%d: %d" % (case, result)
