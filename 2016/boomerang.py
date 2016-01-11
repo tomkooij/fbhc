@@ -13,11 +13,12 @@ INPUT = 'input/boomerang_constellations.txt'
 CHECKNAIVE = 0        # compare solution against SLOW naive solution
 
 def distance(star1, star2):
-    return sqrt((star2[0]-star1[0])**2 + (star2[1]-star1[1])**2)
+    # sqrt not necessary
+    return (star2[0]-star1[0])**2 + (star2[1]-star1[1])**2
 
 
 if __name__ == '__main__':
-    with open(TESTTOM) as f:
+    with open(INPUT) as f:
         T = int(f.readline())
 
         for case in range(1,T+1):
@@ -31,16 +32,16 @@ if __name__ == '__main__':
             for i in range(len(stars)):
                 for j in range(i, len(stars)):
                     if i==j: continue
-                    d[distance(stars[i], stars[j])].append((i,j))
+                    d[distance(stars[i], stars[j])].extend([i,j])
 
             # for each distance count the number of boomerang constellations
             result = 0
             for dist, index_list in d.items():
-                if len(index_list) == 1:
+                if len(index_list) == 2:
                     continue
 
                 # count the frequency of each star index:
-                frequencies = Counter(elem[0] for elem in index_list) + Counter(elem[1] for elem in index_list)
+                frequencies = Counter(index_list)
 
                 # number of boomerang constellations:
                 #  = number of edges in graph with n nodes => n*(n+1)/2
