@@ -12,10 +12,6 @@ TESTTOM = 'input/boomerang_constellations_BIG_INPUT.txt'
 INPUT = 'input/boomerang_constellations.txt'
 CHECKNAIVE = 0        # compare solution against SLOW naive solution
 
-def distance(star1, star2):
-    # sqrt not necessary
-    return (star2[0]-star1[0])**2 + (star2[1]-star1[1])**2
-
 
 if __name__ == '__main__':
     with open(INPUT) as f:
@@ -25,32 +21,24 @@ if __name__ == '__main__':
             N = int(f.readline())
             stars = [tuple(map(int,f.readline().rstrip('\n').split())) for line in range(N)]
 
-
-
-            # create a dict with all distances. Values = list of star indexes
+            print "pim"
+            # create a dict with key = distances. Values = dict with list of index frequencies
             d = defaultdict(lambda : defaultdict(int))
             for i in range(len(stars)):
                 for j in range(i, len(stars)):
                     if i==j: continue
-                    dd = distance(stars[i], stars[j])
+                    dd = (stars[j][0]-stars[i][0])**2 + (stars[j][1]-stars[i][1])**2
                     d[dd][i] += 1
                     d[dd][j] += 1
-
-
+            print "pam"
             # for each distance count the number of boomerang constellations
             result = 0
             for frequencies in d.values():
-                #if len(index_list) == 2:
-                #    continue
-
-                # count the frequency of each star index:
-                #frequencies = Counter(index_list)
-
                 # number of boomerang constellations:
                 #  = number of edges in graph with n nodes => n*(n+1)/2
                 for freq in frequencies.values():
                     result += freq*(freq-1)/2
-
+            print "pet"
             #
             # extremely slow (complex) naive solution
             #
