@@ -28,20 +28,23 @@ if __name__ == '__main__':
 
 
             # create a dict with all distances. Values = list of star indexes
-            d = defaultdict(list)
+            d = defaultdict(lambda : defaultdict(int))
             for i in range(len(stars)):
                 for j in range(i, len(stars)):
                     if i==j: continue
-                    d[distance(stars[i], stars[j])].extend([i,j])
+                    dd = distance(stars[i], stars[j])
+                    d[dd][i] += 1
+                    d[dd][j] += 1
+
 
             # for each distance count the number of boomerang constellations
             result = 0
-            for dist, index_list in d.items():
-                if len(index_list) == 2:
-                    continue
+            for frequencies in d.values():
+                #if len(index_list) == 2:
+                #    continue
 
                 # count the frequency of each star index:
-                frequencies = Counter(index_list)
+                #frequencies = Counter(index_list)
 
                 # number of boomerang constellations:
                 #  = number of edges in graph with n nodes => n*(n+1)/2
