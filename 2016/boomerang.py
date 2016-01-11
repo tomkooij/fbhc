@@ -3,8 +3,7 @@
 # 50 testcases (-> 1 sec testcase)
 #  1000 stars per testcase... Naive permutation solution >> 1 min/testcase
 
-from itertools import groupby
-from collections import defaultdict
+from collections import defaultdict, Counter
 from math import sqrt
 from random import randint
 
@@ -19,7 +18,7 @@ def distance(star1, star2):
 
 
 if __name__ == '__main__':
-    with open(INPUT) as f:
+    with open(TESTCASE) as f:
         T = int(f.readline())
 
         for case in range(1,T+1):
@@ -40,28 +39,20 @@ if __name__ == '__main__':
                     if i==j: continue
                     d[distance(stars[i], stars[j])].append((i,j))
 
+            # for each distance count the number of boomerang constellations
             result = 0
             for dist, index_list in d.items():
-                #print "search d =", dist
                 if len(index_list) == 1:
                     continue
 
-                # create a sorted list of all indexes
-                l = []
-                for x,y in index_list:
-                    l.append(x)
-                    l.append(y)
-                l = sorted(l)
+                # count the frequency of each star index:
+                frequencies = Counter(elem[0] for elem in index_list) + Counter(elem[1] for elem in index_list)
 
-                # count frequencies of star indexes
-                frequencies = [len(list(group)) for key, group in groupby(l)]
-                #print frequencies
-
-                # count the number of boomerang constellations:
-                #  number = number of edges in graph with n nodes => n*(n+1)/2
-                for freq in frequencies:
+                # number of boomerang constellations:
+                #  = number of edges in graph with n nodes => n*(n+1)/2
+                for freq in frequencies.values():
                     result += freq*(freq-1)/2
-                #print "intermediate result = ", result
+
             #
             # extremely slow (complex) naive solution
             #
